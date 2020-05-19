@@ -136,6 +136,7 @@ public class CircleProgressView extends View {
     private int[] mBarColors = new int[]{
             mBarColorStandard //stylish blue
     };
+    private float[] mBarPositions = null;
     //Caps
     private Paint.Cap mBarStrokeCap = Paint.Cap.BUTT;
     private Paint.Cap mSpinnerStrokeCap = Paint.Cap.BUTT;
@@ -312,6 +313,10 @@ public class CircleProgressView extends View {
 
     public int[] getBarColors() {
         return mBarColors;
+    }
+
+    public float[] getBarPositions() {
+        return mBarPositions;
     }
 
     public Paint.Cap getBarStrokeCap() {
@@ -729,6 +734,11 @@ public class CircleProgressView extends View {
      */
     public void setBarColor(@ColorInt int... barColors) {
         this.mBarColors = barColors;
+        setupBarPaint();
+    }
+
+    public void setBarPositions(float... barPositions) {
+        this.mBarPositions = barPositions;
         setupBarPaint();
     }
 
@@ -1477,7 +1487,7 @@ public class CircleProgressView extends View {
 
     private void setupBarPaint() {
         if (mBarColors.length > 1) {
-            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, null));
+            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, mBarPositions));
             Matrix matrix = new Matrix();
             mBarPaint.getShader().getLocalMatrix(matrix);
 
