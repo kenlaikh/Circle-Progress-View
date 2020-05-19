@@ -133,13 +133,17 @@ public class CircleProgressView extends View {
     private int mTextColor = 0xFF000000;
     private int mUnitColor = 0xFF000000;
     private boolean mIsAutoColorEnabled = false;
+    private int[] mRimColors = new int[]{
+            0xAA83d0c9
+    };
+    private float[] mRimPositions = null;
+    private int[] mRimColorsAugmented = mRimColors;
+    private float[] mRimPositionsAugmented = null;
     private int[] mBarColors = new int[]{
             mBarColorStandard //stylish blue
     };
     private float[] mBarPositions = null;
-    private int[] mBarColorsAugmented = new int[]{
-            mBarColorStandard //stylish blue
-    };
+    private int[] mBarColorsAugmented = mBarColors;
     private float[] mBarPositionsAugmented = null;
     //Caps
     private Paint.Cap mBarStrokeCap = Paint.Cap.BUTT;
@@ -518,12 +522,34 @@ public class CircleProgressView extends View {
         return mRimColor;
     }
 
+    public int[] getRimColors() {
+      return mRimColors;
+    }
+
+    public float[] getRimPositions() {
+      return mRimPositions;
+    }
+
     /**
      * @param rimColor The color of the rim around the Circle.
      */
     public void setRimColor(@ColorInt int rimColor) {
         mRimColor = rimColor;
         mRimPaint.setColor(rimColor);
+    }
+
+    public void setRimColors(@ColorInt int... rimColors) {
+      mRimColors = rimColors;
+      setupRimColors();
+      setupRimPositions();
+      setupRimPaint();
+    }
+
+    public void setRimPositions(float... rimPositions) {
+      mRimPositions = rimPositions;
+      setupRimColors();
+      setupRimPositions();
+      setupRimPaint();
     }
 
     public Shader getRimShader() {
@@ -1218,6 +1244,7 @@ public class CircleProgressView extends View {
 
         setupBounds();
         setupBarPaint();
+        setupRimPaint();
 
         if (mClippingBitmap != null) {
             mClippingBitmap = Bitmap.createScaledBitmap(mClippingBitmap, getWidth(), getHeight(), false);
@@ -1478,6 +1505,28 @@ public class CircleProgressView extends View {
         }
     }
 
+    public void setupRimColors() {
+        if (mRimColors.length > 1 && mRimPositions != null) {
+            mRimColorsAugmented = new int[mRimColors.length + 1];
+            mRimColorsAugmented[0] = Color.TRANSPARENT;
+            System.arraycopy(mRimColors, 0, mRimColorsAugmented, 1, mRimColors.length);
+        } else {
+            mRimColorsAugmented = mRimColors;
+        }
+    }
+
+    public void setupRimPositions() {
+        if (mRimColors.length > 1 && mRimPositions != null) {
+            mRimPositionsAugmented = new float[mRimPositions.length + 1];
+            mRimPositionsAugmented[0] = 0.0f;
+            for (int i = 0; i < mRimPositions.length; i++) {
+                mRimPositionsAugmented[i + 1] = (mCurrentValue / mMaxValue) + mRimPositions[i] / mMaxValue * mCurrentValue;
+            }
+        } else {
+            mRimPositionsAugmented = mRimPositions;
+        }
+    }
+
     /**
      * Set the bounds of the component
      */
@@ -1519,11 +1568,11 @@ public class CircleProgressView extends View {
 
     private void setupBarPaint() {
         if (mBarColors.length > 1) {
-            float[] barPosition = null;
+            float[] barPositions = null;
             if (mBarPositions != null && mBarColors.length == mBarPositions.length) {
-                barPosition = mBarPositionsAugmented;
+                barPositions = mBarPositionsAugmented;
             }
-            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColorsAugmented, barPosition));
+            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColorsAugmented, barPositions));
             Matrix matrix = new Matrix();
             mBarPaint.getShader().getLocalMatrix(matrix);
 
@@ -1550,6 +1599,34 @@ public class CircleProgressView extends View {
             mShaderlessBarPaint.setShader(null);
             mShaderlessBarPaint.setColor(mBarColors[0]);
         }
+    }
+
+    private void setupRimPaint() {
+      if (mRimColors.length > 1) {
+        float[] rimPositions = null;
+        if (mRimPositions != null && mRimColors.length == mRimPositions.length) {
+          rimPositions = mRimPositionsAugmented;
+        }
+        mRimPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mRimColorsAugmented, rimPositions));
+        Matrix matrix = new Matrix();
+        mRimPaint.getShader().getLocalMatrix(matrix);
+
+        matrix.postTranslate(-mCircleBounds.centerX(), -mCircleBounds.centerY());
+        matrix.postRotate(mStartAngle);
+        matrix.postTranslate(mCircleBounds.centerX(), mCircleBounds.centerY());
+        mRimPaint.getShader().setLocalMatrix(matrix);
+        mRimPaint.setColor(mRimColors[0]);
+      } else if (mRimColors.length == 1) {
+        mRimPaint.setColor(mRimColors[0]);
+        mRimPaint.setShader(null);
+      } else {
+        mRimPaint.setColor(0xAA83d0c9);
+        mRimPaint.setShader(null);
+      }
+
+      mRimPaint.setAntiAlias(true);
+      mRimPaint.setStyle(Style.STROKE);
+      mRimPaint.setStrokeWidth(mBarWidth);
     }
 
 
@@ -1618,13 +1695,6 @@ public class CircleProgressView extends View {
         mBackgroundCirclePaint.setColor(mBackgroundCircleColor);
         mBackgroundCirclePaint.setAntiAlias(true);
         mBackgroundCirclePaint.setStyle(Style.FILL);
-    }
-
-    private void setupRimPaint() {
-        mRimPaint.setColor(mRimColor);
-        mRimPaint.setAntiAlias(true);
-        mRimPaint.setStyle(Style.STROKE);
-        mRimPaint.setStrokeWidth(mRimWidth);
     }
 
     private void setupBarSpinnerPaint() {

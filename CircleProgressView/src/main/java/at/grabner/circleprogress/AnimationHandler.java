@@ -380,6 +380,8 @@ public class AnimationHandler extends Handler {
         circleView.mAnimationState = AnimationState.IDLE;
         circleView.setupBarColors();
         circleView.setupBarPositions();
+        circleView.setupRimColors();
+        circleView.setupRimPositions();
         if (circleView.mAnimationStateChangedListener != null) {
             circleView.mAnimationStateChangedListener.onAnimationStateChanged(circleView.mAnimationState);
         }
