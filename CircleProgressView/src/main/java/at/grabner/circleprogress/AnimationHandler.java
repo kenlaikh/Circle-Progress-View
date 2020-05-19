@@ -378,6 +378,8 @@ public class AnimationHandler extends Handler {
         circleView.mValueFrom = circleView.mValueTo;
         circleView.mCurrentValue = circleView.mValueTo = ((float[]) msg.obj)[0];
         circleView.mAnimationState = AnimationState.IDLE;
+        circleView.setupBarColors();
+        circleView.setupBarPositions();
         if (circleView.mAnimationStateChangedListener != null) {
             circleView.mAnimationStateChangedListener.onAnimationStateChanged(circleView.mAnimationState);
         }

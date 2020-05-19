@@ -137,6 +137,10 @@ public class CircleProgressView extends View {
             mBarColorStandard //stylish blue
     };
     private float[] mBarPositions = null;
+    private int[] mBarColorsAugmented = new int[]{
+            mBarColorStandard //stylish blue
+    };
+    private float[] mBarPositionsAugmented = null;
     //Caps
     private Paint.Cap mBarStrokeCap = Paint.Cap.BUTT;
     private Paint.Cap mSpinnerStrokeCap = Paint.Cap.BUTT;
@@ -481,6 +485,8 @@ public class CircleProgressView extends View {
      */
     public void setMaxValue(@FloatRange(from = 0) float _maxValue) {
         mMaxValue = _maxValue;
+        setupBarColors();
+        setupBarPositions();
     }
 
     /**
@@ -734,11 +740,15 @@ public class CircleProgressView extends View {
      */
     public void setBarColor(@ColorInt int... barColors) {
         this.mBarColors = barColors;
+        setupBarColors();
+        setupBarPositions();
         setupBarPaint();
     }
 
     public void setBarPositions(float... barPositions) {
         this.mBarPositions = barPositions;
+        setupBarColors();
+        setupBarPositions();
         setupBarPaint();
     }
 
@@ -1446,6 +1456,28 @@ public class CircleProgressView extends View {
     //----------------------------------
     //region Setting up stuff
 
+    public void setupBarColors() {
+        if (mBarColors.length > 1 && mBarPositions != null) {
+            mBarColorsAugmented = new int[mBarColors.length + 1];
+            System.arraycopy(mBarColors, 0, mBarColorsAugmented, 0, mBarColors.length);
+            mBarColorsAugmented[mBarColors.length] = Color.TRANSPARENT;
+        } else {
+            mBarColorsAugmented = mBarColors;
+        }
+    }
+
+    public void setupBarPositions() {
+        if (mBarColors.length > 1 && mBarPositions != null) {
+            mBarPositionsAugmented = new float[mBarPositions.length + 1];
+            for (int i = 0; i < mBarPositions.length; i++) {
+                mBarPositionsAugmented[i] = mBarPositions[i] / mMaxValue * mCurrentValue;
+            }
+            mBarPositionsAugmented[mBarPositions.length] = 1.0f;
+        } else {
+            mBarPositionsAugmented = mBarPositions;
+        }
+    }
+
     /**
      * Set the bounds of the component
      */
@@ -1489,9 +1521,9 @@ public class CircleProgressView extends View {
         if (mBarColors.length > 1) {
             float[] barPosition = null;
             if (mBarPositions != null && mBarColors.length == mBarPositions.length) {
-                barPosition = mBarPositions;
+                barPosition = mBarPositionsAugmented;
             }
-            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, barPosition));
+            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColorsAugmented, barPosition));
             Matrix matrix = new Matrix();
             mBarPaint.getShader().getLocalMatrix(matrix);
 
