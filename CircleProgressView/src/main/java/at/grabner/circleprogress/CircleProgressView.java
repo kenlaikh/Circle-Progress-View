@@ -1520,7 +1520,7 @@ public class CircleProgressView extends View {
             mRimPositionsAugmented = new float[mRimPositions.length + 1];
             mRimPositionsAugmented[0] = 0.0f;
             for (int i = 0; i < mRimPositions.length; i++) {
-                mRimPositionsAugmented[i + 1] = (mCurrentValue / mMaxValue) + mRimPositions[i] / mMaxValue * mCurrentValue;
+                mRimPositionsAugmented[i + 1] = (mCurrentValue / mMaxValue) + mRimPositions[i] / mMaxValue * (mMaxValue - mCurrentValue);
             }
         } else {
             mRimPositionsAugmented = mRimPositions;
