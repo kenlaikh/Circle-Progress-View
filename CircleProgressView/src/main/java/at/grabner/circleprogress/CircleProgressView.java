@@ -1487,7 +1487,11 @@ public class CircleProgressView extends View {
 
     private void setupBarPaint() {
         if (mBarColors.length > 1) {
-            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, mBarPositions));
+            float[] barPosition = null;
+            if (mBarPositions != null && mBarColors.length == mBarPositions.length) {
+                barPosition = mBarPositions;
+            }
+            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, barPosition));
             Matrix matrix = new Matrix();
             mBarPaint.getShader().getLocalMatrix(matrix);
 
