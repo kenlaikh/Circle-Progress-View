@@ -489,8 +489,7 @@ public class CircleProgressView extends View {
      */
     public void setMaxValue(@FloatRange(from = 0) float _maxValue) {
         mMaxValue = _maxValue;
-        setupBarColors();
-        setupBarPositions();
+        setupPaints();
     }
 
     /**
@@ -1635,6 +1634,10 @@ public class CircleProgressView extends View {
      * Call only if changes to color or size properties are not visible.
      */
     public void setupPaints() {
+        setupBarColors();
+        setupBarPositions();
+        setupRimColors();
+        setupRimPositions();
         setupBarPaint();
         setupBarSpinnerPaint();
         setupOuterContourPaint();
