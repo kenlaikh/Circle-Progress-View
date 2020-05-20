@@ -355,6 +355,7 @@ public class CircleProgressView extends View {
         this.mBarWidth = barWidth;
         mBarPaint.setStrokeWidth(barWidth);
         mBarSpinnerPaint.setStrokeWidth(barWidth);
+        invalidate();
     }
 
     public int getBlockCount() {
@@ -490,6 +491,7 @@ public class CircleProgressView extends View {
     public void setMaxValue(@FloatRange(from = 0) float _maxValue) {
         mMaxValue = _maxValue;
         setupPaints();
+        invalidate();
     }
 
     /**
@@ -542,6 +544,7 @@ public class CircleProgressView extends View {
       setupRimColors();
       setupRimPositions();
       setupRimPaint();
+      invalidate();
     }
 
     public void setRimPositions(float... rimPositions) {
@@ -549,6 +552,7 @@ public class CircleProgressView extends View {
       setupRimColors();
       setupRimPositions();
       setupRimPaint();
+      invalidate();
     }
 
     public Shader getRimShader() {
@@ -569,6 +573,7 @@ public class CircleProgressView extends View {
     public void setRimWidth(@IntRange(from = 0) int rimWidth) {
         mRimWidth = rimWidth;
         mRimPaint.setStrokeWidth(rimWidth);
+        invalidate();
     }
 
     public float getSpinSpeed() {
@@ -768,6 +773,7 @@ public class CircleProgressView extends View {
         setupBarColors();
         setupBarPositions();
         setupBarPaint();
+        invalidate();
     }
 
     public void setBarPositions(float... barPositions) {
@@ -775,6 +781,7 @@ public class CircleProgressView extends View {
         setupBarColors();
         setupBarPositions();
         setupBarPaint();
+        invalidate();
     }
 
     /**
