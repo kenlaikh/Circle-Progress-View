@@ -1631,6 +1631,7 @@ public class CircleProgressView extends View {
       }
 
       mRimPaint.setAntiAlias(true);
+      mRimPaint.setStrokeCap(mBarStrokeCap);
       mRimPaint.setStyle(Style.STROKE);
       mRimPaint.setStrokeWidth(mBarWidth);
     }
